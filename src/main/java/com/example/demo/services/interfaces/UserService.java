@@ -1,7 +1,7 @@
 package com.example.demo.services.interfaces;
 
-import com.example.demo.client_models.request.SignupForm;
-import com.example.demo.client_models.request.UpdatedUserDetails;
+import com.example.demo.DTOs.request.SignupDTO;
+import com.example.demo.DTOs.request.UpdatedDetailsDTO;
 import com.example.demo.entities.User;
 
 import java.util.List;
@@ -12,9 +12,9 @@ public interface UserService {
 
     User getUserById(Long id);
 
-    void createUser(SignupForm signupForm);
+    User createUser(SignupDTO signupDTO);
 
-    void updateUser(UpdatedUserDetails updatedUserDetails);
+    User updateUser(UpdatedDetailsDTO updatedDetailsDTO);
 
     void deleteUser(Long id);
 }

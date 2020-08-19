@@ -1,27 +1,27 @@
 package com.example.demo.controllers;
 
-import com.example.demo.client_models.request.SignupForm;
-import com.example.demo.client_models.request.UpdatedUserDetails;
+import com.example.demo.DTOs.request.SignupDTO;
+import com.example.demo.DTOs.request.UpdatedDetailsDTO;
 import com.example.demo.entities.User;
 import com.example.demo.services.interfaces.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @RestController
 @RequestMapping(UserEndpoint.BASE_URL)
 public class UserEndpoint {
 
     static final String BASE_URL = "api/v1/user";
 
-    private final UserService userService;
+    private UserService userService;
 
-    @Autowired
-    public UserEndpoint(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     ResponseEntity<List<User>> getAllUsers() {
@@ -34,15 +34,13 @@ public class UserEndpoint {
     }
 
     @PostMapping
-    ResponseEntity<String> addUser(@RequestBody SignupForm signupForm) {
-        userService.createUser(signupForm);
-        return ResponseEntity.ok().body("User created successfully");
+    ResponseEntity<User> addUser(@RequestBody @Valid SignupDTO signupDTO) {
+        return ResponseEntity.ok().body(userService.createUser(signupDTO));
     }
 
     @PutMapping()
-    ResponseEntity<String> updateUser(@RequestBody UpdatedUserDetails updatedUserDetails) {
-        userService.updateUser(updatedUserDetails);
-        return ResponseEntity.ok().body("User details updated");
+    ResponseEntity<User> updateUser(@RequestBody @Valid UpdatedDetailsDTO updatedDetailsDTO) {
+        return ResponseEntity.ok().body(userService.updateUser(updatedDetailsDTO));
     }
 
     @DeleteMapping("/{id}")

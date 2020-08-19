@@ -1,4 +1,4 @@
-package com.example.demo.client_models.request;
+package com.example.demo.DTOs.request;
 
 import lombok.Data;
 import lombok.Getter;
@@ -9,14 +9,11 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Getter
 @Setter
-public class SignupForm {
+public class SignupDTO {
 
-    @NotBlank
     private String name;
 
-    @NotBlank
     private String email;
 
-    @NotBlank
     private String password;
 }

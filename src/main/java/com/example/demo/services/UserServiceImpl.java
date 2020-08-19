@@ -1,27 +1,25 @@
 package com.example.demo.services;
 
-import com.example.demo.client_models.request.SignupForm;
-import com.example.demo.client_models.request.UpdatedUserDetails;
+import com.example.demo.DTOs.request.SignupDTO;
+import com.example.demo.DTOs.request.UpdatedDetailsDTO;
 import com.example.demo.entities.User;
 import com.example.demo.exceptions.BadRequestException;
 import com.example.demo.exceptions.ResourceNotFoundException;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.services.interfaces.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private UserRepository userRepository;
 
     @Override
     public List<User> getAllUsers() {
@@ -38,31 +36,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(SignupForm signupForm) {
-        if (userRepository.existsByEmail(signupForm.getEmail())) {
+    public User createUser(SignupDTO signupDTO) {
+        if (userRepository.existsByEmail(signupDTO.getEmail())) {
             throw new BadRequestException("This email is already taken");
         }
-        userRepository.save(User.builder()
-                .name(signupForm.getName())
-                .email(signupForm.getEmail())
-                .password(signupForm.getPassword())
+        return userRepository.save(User.builder()
+                .name(signupDTO.getName())
+                .email(signupDTO.getEmail())
+                .password(signupDTO.getPassword())
                 .build());
     }
 
     @Override
-    public void updateUser(UpdatedUserDetails updatedUserDetails) {
-        Optional<User> optionalUser = userRepository.findById(updatedUserDetails.getId());
-        if (!optionalUser.isPresent()) {
-            throw new ResourceNotFoundException("Invalid user id");
+    public User updateUser(UpdatedDetailsDTO updatedDetailsDTO) {
+        User user = userRepository.getOne(updatedDetailsDTO.getId());
+        if (updatedDetailsDTO.getName() != null) {
+            user.setName(updatedDetailsDTO.getName());
         }
-        User user = optionalUser.get();
-        if (updatedUserDetails.getName() != null) {
-            user.setName(updatedUserDetails.getName());
+        if (updatedDetailsDTO.getPassword() != null) {
+            user.setPassword(updatedDetailsDTO.getPassword());
         }
-        if (updatedUserDetails.getPassword() != null) {
-            user.setPassword(updatedUserDetails.getPassword());
-        }
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
